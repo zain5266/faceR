@@ -4,6 +4,7 @@ import argparse
 import glob
 import requests
 import torch
+import shutil
 from torchvision.transforms.functional import normalize
 from facer.basicsr.utils import imwrite, img2tensor, tensor2img
 from facer.basicsr.utils.download_util import load_file_from_url
@@ -302,9 +303,12 @@ if __name__ == '__main__':
         vidwriter.close()
 
     print(f'\nAll results are saved in {result_root}')
-    if os.path.isdir(f'{result_root}/cropped_faces'):
-        os.remove(f'{result_root}/cropped_faces')
-    if os.path.isdir(f'{result_root}/final_results'):
-        os.remove(f'{result_root}/final_results')
-    if os.path.isdir(f'{result_root}/restored_faces'):
-        os.remove(f'{result_root}/restored_faces')
+    try:
+        if os.path.isdir(f'{result_root}/cropped_faces'):
+            shutil.rmtree(f'{result_root}/cropped_faces')
+        if os.path.isdir(f'{result_root}/final_results'):
+            shutil.rmtree(f'{result_root}/final_results')
+        if os.path.isdir(f'{result_root}/restored_faces'):
+            shutil.rmtree(f'{result_root}/restored_faces')
+    except OSError as e:
+        print(f'Error:{e}')
