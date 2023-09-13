@@ -2,7 +2,7 @@ import os
 import requests
 import torch
 
-from facelib.utils import load_file_from_url
+from facer.facelib.utils import load_file_from_url
 from .bisenet import BiSeNet
 from .parsenet import ParseNet
 
