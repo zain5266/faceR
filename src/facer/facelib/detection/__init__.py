@@ -67,7 +67,21 @@ def init_yolov5face_model(model_name, device='cuda'):
     else:
         raise NotImplementedError(f'{model_name} is not implemented.')
     
-    model_path = load_file_from_url(url=model_url, model_dir='weights/facelib', progress=True, file_name=None)
+    if not os.path.isfile("weights/yolov5n-face.pth"):
+        try:
+            
+            response=requests.get(model_url)
+            if response.status_code==200:
+                with open("weights/yolov5n-face.pth",'wb') as file:
+                    file.write(response.content)
+                print("yolov5n-face.pth downloaded successfully")
+            else:
+                print("fail to download yolov5n-face.pth")
+        except:
+            print("Error occure while downloading yolov5n-face.pth ")    
+
+    # model_path = load_file_from_url(url=model_url, model_dir='weights/facelib', progress=True, file_name=None)
+    model_path="weights/yolov5n-face.pth"
     load_net = torch.load(model_path, map_location=lambda storage, loc: storage)
     model.detector.load_state_dict(load_net, strict=True)
     model.detector.eval()
