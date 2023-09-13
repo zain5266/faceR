@@ -5,10 +5,10 @@ import glob
 import requests
 import torch
 from torchvision.transforms.functional import normalize
-from .basicsr.utils import imwrite, img2tensor, tensor2img
-from .basicsr.utils.download_util import load_file_from_url
-from .basicsr.utils.misc import get_device
-from .basicsr.utils.registry import ARCH_REGISTRY
+from facer.basicsr.utils import imwrite, img2tensor, tensor2img
+from facer.basicsr.utils.download_util import load_file_from_url
+from facer.basicsr.utils.misc import get_device
+from facer.basicsr.utils.registry import ARCH_REGISTRY
 
 
 if __name__ == '__main__':
