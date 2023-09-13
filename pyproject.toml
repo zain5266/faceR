@@ -35,4 +35,4 @@ build-backend = "poetry.core.masonry.api"
 Homepage = "https://github.com/zain5266/faceR"
  
 [project.scripts]
-inference_codeformer = "fr.inference_codeformer:main"
+inference_codeformer = "faceR.inference_codeformer"
