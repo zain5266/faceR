@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "face-restoration"
+version = "0.1"
+description = "face restoration for package installation"
+authors = ["Your Name <you@example.com>"]
+license = "none"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.10"
+addict = "future"
+lmdb = "numpy"
+opencv-python = "pillow"
+PyYAML = "requests"
+scikit-image = "scipy"
+tb-nightly = "torch"
+torchvision = "tqdm"
+yapf = "lpips"
+gdown = "^4.7.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[project.urls]
+Homepage = "https://github.com/zain5266/faceR"
+ 
+[project.scripts]
+inference_codeformer = "fr.inference_codeformer:main"
