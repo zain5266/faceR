@@ -302,3 +302,9 @@ if __name__ == '__main__':
         vidwriter.close()
 
     print(f'\nAll results are saved in {result_root}')
+    if os.path.isdir(f'{result_root}/cropped_faces'):
+        os.remove(f'{result_root}/cropped_faces')
+    if os.path.isdir(f'{result_root}/final_results'):
+        os.remove(f'{result_root}/final_results')
+    if os.path.isdir(f'{result_root}/restored_faces'):
+        os.remove(f'{result_root}/restored_faces')
