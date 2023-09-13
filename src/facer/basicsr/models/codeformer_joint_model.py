@@ -4,11 +4,11 @@ from os import path as osp
 from tqdm import tqdm
 
 
-from basicsr.archs import build_network
-from basicsr.losses import build_loss
-from basicsr.metrics import calculate_metric
-from basicsr.utils import get_root_logger, imwrite, tensor2img
-from basicsr.utils.registry import MODEL_REGISTRY
+from facer.basicsr.archs import build_network
+from facer.basicsr.losses import build_loss
+from facer.basicsr.metrics import calculate_metric
+from facer.basicsr.utils import get_root_logger, imwrite, tensor2img
+from facer.basicsr.utils.registry import MODEL_REGISTRY
 import torch.nn.functional as F
 from .sr_model import SRModel
 
