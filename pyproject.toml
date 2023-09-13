@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "faceR"
+name = "facer"
 version = "0.1"
 description = "face restoration for package installation"
 authors = ["Your Name <you@example.com>"]
@@ -32,7 +32,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [project.urls]
-Homepage = "https://github.com/zain5266/faceR"
+Homepage = "https://github.com/zain5266/facer"
  
 [project.scripts]
-inference_codeformer = "faceR.inference_codeformer"
+inference_codeformer = "facer.inference_codeformer"
