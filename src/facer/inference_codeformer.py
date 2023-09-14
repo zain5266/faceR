@@ -169,8 +169,9 @@ def main(link,name):
     w = args.fidelity_weight
     user_id=args.user_id
     input_video = False
-    v=download_video(args.input_path,user_id)
-    args.input_path=v
+    # v=download_video(args.input_path,user_id)
+    # args.input_path=v
+    print(f"video path is {args.input_path}")
     if args.input_path.endswith(('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG')): # input single img path
         input_img_list = [args.input_path]
         result_root = f'results/test_img_{user_id}'
@@ -185,7 +186,7 @@ def main(link,name):
         audio = vidreader.get_audio()
         fps = vidreader.get_fps() if args.save_video_fps is None else args.save_video_fps   
         
-        result_root = f'results/upscaled_video'
+        result_root = f'upscaled_video'
         input_video = True
         vidreader.close()
     else: # input img folder
