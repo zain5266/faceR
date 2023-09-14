@@ -58,8 +58,8 @@ if __name__ == '__main__':
                                             connect_list=['32', '64', '128']).to(device)
     
     # ckpt_path = 'weights/CodeFormer/codeformer.pth'
-    ckpt_path = load_file_from_url(url="weights/codeformer_inpainting.pth", 
-                                    model_dir='weights/CodeFormer', progress=True, file_name=None)
+    # ckpt_path = load_file_from_url(url="weights/codeformer_inpainting.pth", 
+    #                                 model_dir='weights/CodeFormer', progress=True, file_name=None)
     ckpt_path="weights/codeformer_inpainting.pth"
     checkpoint = torch.load(ckpt_path)['params_ema']
     net.load_state_dict(checkpoint)
