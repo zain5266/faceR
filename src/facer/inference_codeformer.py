@@ -134,7 +134,7 @@ if __name__ == '__main__':
     w = args.fidelity_weight
     user_id=args.user_id
     input_video = False
-    v=download_video(url,user_id)
+    v=download_video(args.input_path,user_id)
     args.input_path=v
     if args.input_path.endswith(('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG')): # input single img path
         input_img_list = [args.input_path]
