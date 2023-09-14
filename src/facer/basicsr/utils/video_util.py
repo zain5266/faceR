@@ -35,9 +35,9 @@ class VideoReader:
                 ffmpeg.input(video_path).output('pipe:', format='rawvideo', pix_fmt='bgr24',
                                                 loglevel='error').run_async(
                                                     pipe_stdin=True, pipe_stdout=True, cmd='ffmpeg'))
-        except FileNotFoundError:
-            print('Please install ffmpeg (not ffmpeg-python) by running\n',
-                  '\t$ conda install -c conda-forge ffmpeg')
+        except Exception as e:
+            print(f"an error occure:{str(e.with_traceback)}")
+            print(f"ERROR:{e}")
             sys.exit(0)
 
         meta = get_video_meta_info(video_path)

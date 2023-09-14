@@ -11,7 +11,6 @@ from facer.basicsr.utils.download_util import load_file_from_url
 from facer.basicsr.utils.misc import gpu_is_available, get_device
 from facer.facelib.utils.face_restoration_helper import FaceRestoreHelper
 from facer.facelib.utils.misc import is_gray
-
 from facer.basicsr.utils.registry import ARCH_REGISTRY
 
 pretrain_model_url = {
@@ -57,7 +56,7 @@ def download_video(url,user_id):
     try:
         response=requests.get(url,stream=True)
         if response.status_code==200:
-            save_dir=f"{user_id}_video"
+            save_dir=f"{user_id}_inputvideo"
             if not os.path.isdir(save_dir):
                 os.makedirs(save_dir)
             file_name=f"upscaled_video_{user_id}.mp4"
@@ -332,7 +331,7 @@ if __name__ == '__main__':
             shutil.rmtree(f'{result_root}/final_results_{user_id}')
         if os.path.isdir(f'{result_root}/restored_faces_{user_id}'):
             shutil.rmtree(f'{result_root}/restored_faces_{user_id}')
-        if os.path.isdir(f"{user_id}_video"):
-            shutil.rmtree(f"{user_id}_video")
+        if os.path.isdir(f"{user_id}_inputvideo"):
+            shutil.rmtree(f"{user_id}_inputvideo")
     except OSError as e:
         print(f'Error:{e}')
