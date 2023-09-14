@@ -93,7 +93,7 @@ class ImageRestorationConfig:
         self.input_path = './inputs/whole_imgs'
         self.output_path = None
         self.fidelity_weight = 0.5
-        self.upscale = 2
+        self.upscale = 1
         self.has_aligned = False
         self.only_center_face = False
         self.draw_box = False
