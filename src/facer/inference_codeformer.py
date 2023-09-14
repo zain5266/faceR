@@ -263,7 +263,7 @@ if __name__ == '__main__':
         for idx, (cropped_face, restored_face) in enumerate(zip(face_helper.cropped_faces, face_helper.restored_faces)):
             # save cropped face
             if not args.has_aligned: 
-                save_crop_path = os.path.join(result_root, 'cropped_faces', f'{basename}_{idx:02d}.png')
+                save_crop_path = os.path.join(result_root, f'cropped_faces_{user_id}', f'{basename}_{idx:02d}.png')
                 imwrite(cropped_face, save_crop_path)
             # save restored face
             if args.has_aligned:
@@ -272,14 +272,14 @@ if __name__ == '__main__':
                 save_face_name = f'{basename}_{idx:02d}.png'
             if args.suffix is not None:
                 save_face_name = f'{save_face_name[:-4]}_{args.suffix}.png'
-            save_restore_path = os.path.join(result_root, 'restored_faces', save_face_name)
+            save_restore_path = os.path.join(result_root, f'restored_faces_{user_id}', save_face_name)
             imwrite(restored_face, save_restore_path)
 
         # save restored img
         if not args.has_aligned and restored_img is not None:
             if args.suffix is not None:
                 basename = f'{basename}_{args.suffix}'
-            save_restore_path = os.path.join(result_root, 'final_results', f'{basename}.png')
+            save_restore_path = os.path.join(result_root, f'final_results_{user_id}', f'{basename}.png')
             imwrite(restored_img, save_restore_path)
 
     # save enhanced video
@@ -287,7 +287,7 @@ if __name__ == '__main__':
         print('Video Saving...')
         # load images
         video_frames = []
-        img_list = sorted(glob.glob(os.path.join(result_root, 'final_results', '*.[jp][pn]g')))
+        img_list = sorted(glob.glob(os.path.join(result_root, f'final_results_{user_id}', '*.[jp][pn]g')))
         for img_path in img_list:
             img = cv2.imread(img_path)
             video_frames.append(img)
@@ -304,11 +304,11 @@ if __name__ == '__main__':
 
     print(f'\nAll results are saved in {result_root}')
     try:
-        if os.path.isdir(f'{result_root}/cropped_faces'):
-            shutil.rmtree(f'{result_root}/cropped_faces')
-        if os.path.isdir(f'{result_root}/final_results'):
-            shutil.rmtree(f'{result_root}/final_results')
-        if os.path.isdir(f'{result_root}/restored_faces'):
-            shutil.rmtree(f'{result_root}/restored_faces')
+        if os.path.isdir(f'{result_root}/cropped_faces_{user_id}'):
+            shutil.rmtree(f'{result_root}/cropped_faces_{user_id}')
+        if os.path.isdir(f'{result_root}/final_results_{user_id}'):
+            shutil.rmtree(f'{result_root}/final_results_{user_id}')
+        if os.path.isdir(f'{result_root}/restored_faces_{user_id}'):
+            shutil.rmtree(f'{result_root}/restored_faces_{user_id}')
     except OSError as e:
         print(f'Error:{e}')
