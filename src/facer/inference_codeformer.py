@@ -72,8 +72,29 @@ def download_video(url,user_id):
     except Exception as e:
         print(f"an error occured:{str(e)}")
         return None
+    
+class ImageRestorationConfig:
+    def __init__(self):
+        self.input_path = './inputs/whole_imgs'
+        self.output_path = None
+        self.fidelity_weight = 0.5
+        self.upscale = 2
+        self.has_aligned = False
+        self.only_center_face = False
+        self.draw_box = False
+        self.detection_model = 'retinaface_resnet50'
+        self.bg_upsampler = 'None'
+        self.face_upsample = False
+        self.bg_tile = 400
+        self.suffix = None
+        self.save_video_fps = None
+        self.user_id=""
 
-if __name__ == '__main__':
+def main(link,name):
+    global args
+    args = ImageRestorationConfig()
+    args.user_id=name
+    args.input_path=link
 
     if not os.path.isdir("weights"):
         os.makedirs("weights")
