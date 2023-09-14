@@ -22,7 +22,7 @@ tb-nightly = "^2.15.0a20230902"
 torch = "^2.0.1"
 torchvision = "0.15.2"
 tqdm = "^4.66.1"
-yapf = ""
+yapf = "<=0.40.1"
 lpips = "^0.1.4"
 gdown = "^4.7.1"
 
