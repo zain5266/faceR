@@ -36,8 +36,7 @@ class VideoReader:
                                                 loglevel='error').run_async(
                                                     pipe_stdin=True, pipe_stdout=True, cmd='ffmpeg'))
         except Exception as e:
-            print(f"an error occure:{str(e.with_traceback)}")
-            print(f"ERROR:{e}")
+            print(f"an error occure:{str(e)}")
             sys.exit(0)
 
         meta = get_video_meta_info(video_path)
