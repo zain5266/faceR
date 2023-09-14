@@ -53,6 +53,26 @@ def set_realesrgan():
                         'If you want to disable it, please remove `--bg_upsampler` and `--face_upsample` in command.',
                         category=RuntimeWarning)
     return upsampler
+def download_video(url,user_id):
+    try:
+        response=requests.get(url,stream=True)
+        if response.status_code==200:
+            save_dir=f"{user_id}_video"
+            if not os.path.isdir(save_dir):
+                os.makedirs(save_dir)
+            file_name=f"upscaled_video_{user_id}.mp4"
+            save_path=os.path.join(save_dir,file_name)
+            print("downloading video")
+            with open(save_path,'wb') as video_file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    video_file.write(chunk)
+            return save_path
+        else:
+            print(f"fail to downlaod video.Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"an error occured:{str(e)}")
+        return None
 
 if __name__ == '__main__':
 
@@ -114,6 +134,8 @@ if __name__ == '__main__':
     w = args.fidelity_weight
     user_id=args.user_id
     input_video = False
+    v=download_video(url,user_id)
+    args.input_path=v
     if args.input_path.endswith(('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG')): # input single img path
         input_img_list = [args.input_path]
         result_root = f'results/test_img_{user_id}'
@@ -310,5 +332,7 @@ if __name__ == '__main__':
             shutil.rmtree(f'{result_root}/final_results_{user_id}')
         if os.path.isdir(f'{result_root}/restored_faces_{user_id}'):
             shutil.rmtree(f'{result_root}/restored_faces_{user_id}')
+        if os.path.isdir(f"{user_id}_video"):
+            shutil.rmtree(f"{user_id}_video")
     except OSError as e:
         print(f'Error:{e}')
