@@ -1,4 +1,5 @@
 import os
+import time
 import cv2
 import argparse
 import glob
@@ -353,7 +354,8 @@ def main(link,name):
         height, width = video_frames[0].shape[:2]
         if args.suffix is not None:
             video_name = f'{user_id}_{args.suffix}.png'
-        save_restore_path = os.path.join(result_root, f'video_{user_id}.mp4')
+        timestamp = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime())
+        save_restore_path = os.path.join(result_root, f'video_{user_id}_{timestamp}.mp4')
         vidwriter = VideoWriter(save_restore_path, height, width, fps, audio)
          
         for f in video_frames:
