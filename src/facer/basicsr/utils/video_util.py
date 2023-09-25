@@ -113,7 +113,9 @@ class VideoWriter:
         try:
             frame = frame.astype(np.uint8).tobytes()
             self.stream_writer.stdin.write(frame)
-        except BrokenPipeError:
+        except BrokenPipeError as b:
+            import traceback
+            print(traceback.print_exception(b))
             print('Please re-install ffmpeg and libx264 by running\n',
                   '\t$ conda install -c conda-forge ffmpeg\n',
                   '\t$ conda install -c conda-forge x264')
