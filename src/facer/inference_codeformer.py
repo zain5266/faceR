@@ -260,12 +260,12 @@ def main(link,name):
         if isinstance(img_path, str):
             img_name = os.path.basename(img_path)
             basename, ext = os.path.splitext(img_name)
-            print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
+            # print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
             img = cv2.imread(img_path, cv2.IMREAD_COLOR)
         else: # for video processing
             basename = str(i).zfill(6)
             img_name = f'{user_id}_{basename}' if input_video else basename
-            print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
+            # print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
             img = img_path
 
         if args.has_aligned: 
@@ -280,7 +280,7 @@ def main(link,name):
             # get face landmarks for each face
             num_det_faces = face_helper.get_face_landmarks_5(
                 only_center_face=args.only_center_face, resize=640, eye_dist_threshold=5)
-            print(f'\tdetect {num_det_faces} faces')
+            # print(f'\tdetect {num_det_faces} faces')
             # align and warp each face
             face_helper.align_warp_face()
 
