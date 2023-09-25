@@ -117,6 +117,7 @@ class VideoWriter:
             import traceback
             print(traceback.print_exception(b))
             print("error==",b)
+            sys.exit(0)
 
     def close(self):
         self.stream_writer.stdin.close()
