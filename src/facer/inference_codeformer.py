@@ -13,6 +13,7 @@ from facer.basicsr.utils.misc import gpu_is_available, get_device
 from facer.facelib.utils.face_restoration_helper import FaceRestoreHelper
 from facer.facelib.utils.misc import is_gray
 from facer.basicsr.utils.registry import ARCH_REGISTRY
+import math
 
 pretrain_model_url = {
     'restoration': 'https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/codeformer.pth',
@@ -352,6 +353,8 @@ def main(link,name):
             video_frames.append(img)
         # write images to video
         height, width = video_frames[0].shape[:2]
+        height=math.ceil(height/2)*2
+        width=math.ceil(width/2)*2
         if args.suffix is not None:
             video_name = f'{user_id}_{args.suffix}.png'
         timestamp = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime())
