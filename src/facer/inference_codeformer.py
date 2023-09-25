@@ -360,7 +360,7 @@ def main(link,name):
         timestamp = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime())
         save_restore_path = os.path.join(result_root, f'video_{user_id}_{timestamp}.mp4')
         vidwriter = VideoWriter(save_restore_path, height, width, fps, audio)
-         
+        print(len(video_frames))
         for f in video_frames:
             vidwriter.write_frame(f)
         vidwriter.close()
