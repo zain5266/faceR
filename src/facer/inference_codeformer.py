@@ -353,8 +353,6 @@ def main(link,name):
             video_frames.append(img)
         # write images to video
         height, width = video_frames[0].shape[:2]
-        print("height in main:",height)
-        print("width in main:", width)
         if args.suffix is not None:
             video_name = f'{user_id}_{args.suffix}.png'
         timestamp = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime())
