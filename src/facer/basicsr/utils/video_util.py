@@ -113,10 +113,10 @@ class VideoWriter:
         try:
             frame = frame.astype(np.uint8).tobytes()
             self.stream_writer.stdin.write(frame)
-        except Exception as b:
+        except BrokenPipeError as b:
             import traceback
             print(traceback.print_exception(b))
-            print("error==",b)
+            print(b.strerror)
             sys.exit(0)
 
     def close(self):
