@@ -108,6 +108,7 @@ class ImageRestorationConfig:
         self.user_id=""
 
 def main(link,name):
+    print("in main")
     global args
     args = ImageRestorationConfig()
     args.user_id=name
@@ -360,6 +361,9 @@ def main(link,name):
         vidwriter = VideoWriter(save_restore_path, height, width, fps, audio)
         print(len(video_frames))
         for f in video_frames:
+            print("f.shape, f.dtype")
+            print("f.shape=",f.shape)
+            print("f.shape=",f.dtype)
             vidwriter.write_frame(f)
         vidwriter.close()
 
