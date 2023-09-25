@@ -1,3 +1,4 @@
+from math import ceil
 import cv2
 import numpy as np
 import os
@@ -373,8 +374,8 @@ class FaceRestoreHelper(object):
         h, w, _ = self.input_img.shape
         print("heigh==",h)
         print("wight==",w)
-        h=math.ceil(h/2)*2
-        w=math.ceil(w/2)*2
+        h=ceil(h/2)*2
+        w=ceil(w/2)*2
         print("newheigh==",h)
         print("new wight==",w)
         h_up, w_up = int(h * self.upscale_factor), int(w * self.upscale_factor)
