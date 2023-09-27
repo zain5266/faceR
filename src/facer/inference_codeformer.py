@@ -543,22 +543,22 @@ def upscale_image(link,name):
             for idx, (cropped_face, restored_face) in enumerate(zip(face_helper.cropped_faces, face_helper.restored_faces)):
                 # save cropped face
                 if not args.has_aligned: 
-                    save_crop_path = os.path.join(f'cropped_faces_{args.user_id}', f'{basename}_{idx:02d}.png')
+                    save_crop_path = os.path.join(f'cropped_faces', f'{basename}_{args.user_id}.png')
                     imwrite(cropped_face, save_crop_path)
                 # save restored face
                 if args.has_aligned:
-                    save_face_name = f'{basename}.png'
+                    save_face_name = f'{basename}_{args.user_id}.png'
                 else:
-                    save_face_name = f'{basename}_{idx:02d}.png'
+                    save_face_name = f'{basename}_{args.user_id}.png'
                 if args.suffix is not None:
-                    save_face_name = f'{save_face_name[:-4]}_{args.suffix}.png'
-                save_restore_path = os.path.join(f'restored_faces_{args.user_id}', save_face_name)
+                    save_face_name = f'{save_face_name[:-4]}_{args.user_id}.png'
+                save_restore_path = os.path.join(f'restored_faces', save_face_name)
                 imwrite(restored_face, save_restore_path)
             # save restored img
             if not args.has_aligned and restored_img is not None:
                 if args.suffix is not None:
-                    basename = f'{basename}_{args.suffix}'
-                save_restore_path = os.path.join(f'final_results_{args.user_id}', f'{basename}.png')
+                    basename = f'{basename}_{args.user_id}'
+                save_restore_path = os.path.join(f'final_results', f'{basename}.png')
                 imwrite(restored_img, save_restore_path)
             print(f'\nAll results are saved in {result_root}')
             try:
