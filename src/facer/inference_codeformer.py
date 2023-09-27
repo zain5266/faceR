@@ -444,7 +444,7 @@ def upscale_image(link,name):
         except:
             print("Error occure while downloading RealESRGAN_x2plus.pth ")        
     device = get_device()
-    downloaded_image=download_image()
+    downloaded_image=download_image(link)
     if downloaded_image[0]:
         args.input_path=downloaded_image[1]
         if args.input_path.endswith(('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG','webp')): # input single img path
