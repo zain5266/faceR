@@ -564,8 +564,6 @@ def upscale_image(link,name):
             try:
                 if os.path.isdir('cropped_faces'):
                     os.rmtree('cropped_faces')
-                if os.path.isdir('final_results'):
-                    os.rmtree('final_results')
                 if os.path.isdir('restored_faces'):
                     os.rmtree('restored_faces')
                 if os.path.isdir("inputvideo"):
