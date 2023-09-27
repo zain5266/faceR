@@ -14,6 +14,7 @@ from facer.facelib.utils.face_restoration_helper import FaceRestoreHelper
 from facer.facelib.utils.misc import is_gray
 from facer.basicsr.utils.registry import ARCH_REGISTRY
 import math
+from urllib.parse import urlparse
 
 pretrain_model_url = {
     'restoration': 'https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/codeformer.pth',
@@ -381,3 +382,198 @@ def main(link,name):
     except OSError as e:
         print(f'Error:{e}')
     return save_restore_path
+def download_image(image_url):
+    if "http" not in image_url:
+        return (False, "Invalid URL format.")
+
+    try:
+        print("img url=",image_url)
+        response = requests.get(image_url)
+        if response.status_code != 200:
+            return (False, f"Failed to retrieve the image. Status code: {response.status_code}")
+
+        # Extract the file extension from the URL
+        parsed_url = urlparse(image_url)
+        file_extension = os.path.splitext(parsed_url.path)[1].lstrip(".").lower()
+        print("image file_extension=",file_extension)
+        # Check if the extension is one of the expected image types
+        valid_extensions = ['jpg', 'jpeg', 'png', 'webp']
+        if file_extension not in valid_extensions:
+            return (False, "Link does not contain a supported image format.")
+
+        os.makedirs("image_data", exist_ok=True)  # Create the directory if it doesn't exist
+        image_file_name = f"image_data/face_image.{file_extension}"
+        
+        with open(image_file_name, 'wb') as f:
+            f.write(response.content)
+        
+        print("FILENAME =", image_file_name)
+        return (True, image_file_name)
+    except Exception as e:
+        return (False, f"An error occurred: {str(e)}")
+    
+def upscale_image(link,name):
+    global args
+    args = ImageRestorationConfig()
+    args.user_id=name
+    args.input_path=link
+    w = args.fidelity_weight
+    if not os.path.isdir("weights"):
+        os.makedirs("weights")
+    if not os.path.isfile("weights/codeformer.pth"):
+        try:
+            response=requests.get(pretrain_model_url['restoration'])
+            if response.status_code==200:
+                with open("weights/codeformer.pth",'wb') as file:
+                    file.write(response.content)
+                print("codeformer.pth downloaded successfully")
+            else:
+                print("fail to download codeformer.pth")
+        except:
+            print("Error occure while downloading codeformer.pth ")
+    if not os.path.isfile("weights/RealESRGAN_x2plus.pth"):
+        try:
+            url="https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/RealESRGAN_x2plus.pth"
+            response=requests.get(url)
+            if response.status_code==200:
+                with open("weights/RealESRGAN_x2plus.pth",'wb') as file:
+                    file.write(response.content)
+                print("RealESRGAN_x2plus.pth downloaded successfully")
+            else:
+                print("fail to download RealESRGAN_x2plus.pth")
+        except:
+            print("Error occure while downloading RealESRGAN_x2plus.pth ")        
+    device = get_device()
+    downloaded_image=download_image()
+    if downloaded_image[0]:
+        args.input_path=downloaded_image[1]
+        if args.input_path.endswith(('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG','webp')): # input single img path
+            input_img_list = [args.input_path]
+            result_root = f'results/test_img_{args.user_id}'
+            bg_upsampler = set_realesrgan()
+            face_upsampler = bg_upsampler
+            # ------------------ set up CodeFormer restorer -------------------
+            net = ARCH_REGISTRY.get('CodeFormer')(dim_embd=512, codebook_size=1024, n_head=8, n_layers=9, 
+                                                    connect_list=['32', '64', '128', '256']).to(device)
+            
+            # ckpt_path = 'weights/CodeFormer/codeformer.pth'
+            # ckpt_path = load_file_from_url(url=pretrain_model_url['restoration'], 
+            #                                 model_dir='weights/CodeFormer', progress=True, file_name=None)
+            ckpt_path='weights/codeformer.pth'
+            checkpoint = torch.load(ckpt_path)['params_ema']
+            net.load_state_dict(checkpoint)
+            net.eval()
+            face_helper = FaceRestoreHelper(
+            args.upscale,
+            face_size=512,
+            crop_ratio=(1, 1),
+            det_model = args.detection_model,
+            save_ext='png',
+            use_parse=True,
+            device=device)
+
+            # clean all the intermediate results to process the next image
+        for i, img_path in enumerate(input_img_list):
+        # clean all the intermediate results to process the next image
+            face_helper.clean_all()
+            
+            if isinstance(img_path, str):
+                img_name = os.path.basename(img_path)
+                basename, ext = os.path.splitext(img_name)
+                # print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
+                img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+            else: # for video processing
+                basename = str(i).zfill(6)
+                img_name = f'{args.user_id}_{basename}'
+                # print(f'[{i+1}/{test_img_num}] Processing: {img_name}')
+                img = img_path
+
+            if args.has_aligned: 
+                # the input faces are already cropped and aligned
+                img = cv2.resize(img, (512, 512), interpolation=cv2.INTER_LINEAR)
+                face_helper.is_gray = is_gray(img, threshold=10)
+                if face_helper.is_gray:
+                    print('Grayscale input: True')
+                face_helper.cropped_faces = [img]
+            else:
+                face_helper.read_image(img)
+                # get face landmarks for each face
+                num_det_faces = face_helper.get_face_landmarks_5(
+                    only_center_face=args.only_center_face, resize=640, eye_dist_threshold=5)
+                # print(f'\tdetect {num_det_faces} faces')
+                # align and warp each face
+                face_helper.align_warp_face()
+
+            # face restoration for each cropped face
+            for idx, cropped_face in enumerate(face_helper.cropped_faces):
+                # prepare data
+                cropped_face_t = img2tensor(cropped_face / 255., bgr2rgb=True, float32=True)
+                normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
+                cropped_face_t = cropped_face_t.unsqueeze(0).to(device)
+
+                try:
+                    with torch.no_grad():
+                        output = net(cropped_face_t, w=w, adain=True)[0]
+                        restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
+                    del output
+                    torch.cuda.empty_cache()
+                except Exception as error:
+                    print(f'\tFailed inference for CodeFormer: {error}')
+                    restored_face = tensor2img(cropped_face_t, rgb2bgr=True, min_max=(-1, 1))
+
+                restored_face = restored_face.astype('uint8')
+                face_helper.add_restored_face(restored_face, cropped_face)
+
+            # paste_back
+            if not args.has_aligned:
+                # upsample the background
+                if bg_upsampler is not None:
+                    # Now only support RealESRGAN for upsampling background
+                    bg_img = bg_upsampler.enhance(img, outscale=args.upscale)[0]
+                else:
+                    bg_img = None
+                face_helper.get_inverse_affine(None)
+                # paste each restored face to the input image
+                if args.face_upsample and face_upsampler is not None: 
+                    restored_img = face_helper.paste_faces_to_input_image(upsample_img=bg_img, draw_box=args.draw_box, face_upsampler=face_upsampler)
+                else:
+                    restored_img = face_helper.paste_faces_to_input_image(upsample_img=bg_img, draw_box=args.draw_box)
+
+            # save faces
+            for idx, (cropped_face, restored_face) in enumerate(zip(face_helper.cropped_faces, face_helper.restored_faces)):
+                # save cropped face
+                if not args.has_aligned: 
+                    save_crop_path = os.path.join(f'cropped_faces', f'{basename}_{idx:02d}.png')
+                    imwrite(cropped_face, save_crop_path)
+                # save restored face
+                if args.has_aligned:
+                    save_face_name = f'{basename}.png'
+                else:
+                    save_face_name = f'{basename}_{idx:02d}.png'
+                if args.suffix is not None:
+                    save_face_name = f'{save_face_name[:-4]}_{args.suffix}.png'
+                save_restore_path = os.path.join(f'restored_faces', save_face_name)
+                imwrite(restored_face, save_restore_path)
+            # save restored img
+            if not args.has_aligned and restored_img is not None:
+                if args.suffix is not None:
+                    basename = f'{basename}_{args.suffix}'
+                save_restore_path = os.path.join(f'final_results', f'{basename}.png')
+                imwrite(restored_img, save_restore_path)
+            print(f'\nAll results are saved in {result_root}')
+            try:
+                if os.path.isdir('cropped_faces'):
+                    os.rmtree('cropped_faces')
+                if os.path.isdir('final_results'):
+                    os.rmtree('final_results')
+                if os.path.isdir('restored_faces'):
+                    os.rmtree('restored_faces')
+                if os.path.isdir("inputvideo"):
+                    os.rmtree("inputvideo")
+            except OSError as e:
+                print(f'Error:{e}')
+            return save_restore_path
+        else:
+            return (False,"not valid image was provided")
+    else:
+        return downloaded_image[1]
