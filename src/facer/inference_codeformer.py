@@ -563,11 +563,11 @@ def upscale_image(link,name):
             print(f'\nAll results are saved in {result_root}')
             try:
                 if os.path.isdir('cropped_faces'):
-                    os.rmtree('cropped_faces')
+                    shutil.rmtree('cropped_faces')
                 if os.path.isdir('restored_faces'):
-                    os.rmtree('restored_faces')
+                    shutil.rmtree('restored_faces')
                 if os.path.isdir("inputvideo"):
-                    os.rmtree("inputvideo")
+                    shutil.rmtree("inputvideo")
             except OSError as e:
                 print(f'Error:{e}')
             return save_restore_path
